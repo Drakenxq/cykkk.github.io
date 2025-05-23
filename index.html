@@ -163,7 +163,6 @@
       document.getElementById("popup").style.display = "flex";
       document.getElementById("openBtn").style.display = "none";
 
-      // เริ่มสร้างดาวหลังจากกด
       sparkleInterval = setInterval(() => {
         const sparkle = document.createElement("div");
         sparkle.classList.add("sparkle");
@@ -179,6 +178,7 @@
       document.getElementById("popup").style.display = "none";
       clearInterval(sparkleInterval);
       sparkleInterval = null;
+      location.reload(); // รีเฟรชหน้า
     }
 
     window.onclick = function(event) {
