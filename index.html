@@ -93,6 +93,7 @@
       font-size: 1.5rem;
       animation: rise 5s linear infinite;
       opacity: 0.8;
+      pointer-events: none;
     }
 
     @keyframes rise {
@@ -106,7 +107,6 @@
       }
     }
 
-    /* Responsive */
     @media (max-width: 480px) {
       #openBtn {
         font-size: 1rem;
@@ -155,15 +155,30 @@
       "บางครั้งแค่ 'อยู่ตรงนี้' ก็เพียงพอแล้วนะ<br>เพราะเธอมีคุณค่าสำหรับเค้าเสมอ 💖"
     ];
 
+    let sparkleInterval = null;
+
     function openModal() {
       const randomMsg = messages[Math.floor(Math.random() * messages.length)];
       document.getElementById("message").innerHTML = randomMsg;
       document.getElementById("popup").style.display = "flex";
       document.getElementById("openBtn").style.display = "none";
+
+      // เริ่มสร้างดาวหลังจากกด
+      sparkleInterval = setInterval(() => {
+        const sparkle = document.createElement("div");
+        sparkle.classList.add("sparkle");
+        sparkle.style.left = Math.random() * 100 + "vw";
+        sparkle.style.fontSize = (Math.random() * 1.5 + 1) + "rem";
+        sparkle.innerText = "✨";
+        document.body.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 5000);
+      }, 600);
     }
 
     function closeModal() {
       document.getElementById("popup").style.display = "none";
+      clearInterval(sparkleInterval);
+      sparkleInterval = null;
     }
 
     window.onclick = function(event) {
@@ -172,17 +187,6 @@
         closeModal();
       }
     }
-
-    // class ดาว
-    setInterval(() => {
-      const sparkle = document.createElement("div");
-      sparkle.classList.add("sparkle");
-      sparkle.style.left = Math.random() * 100 + "vw";
-      sparkle.style.fontSize = (Math.random() * 1.5 + 1) + "rem";
-      sparkle.innerText = "✨";
-      document.body.appendChild(sparkle);
-      setTimeout(() => sparkle.remove(), 5000);
-    }, 600);
   </script>
 
 </body>
