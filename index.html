@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>มาส่งกำลังจายยให้</title>
   <style>
     body {
@@ -55,6 +55,7 @@
       box-shadow: 0 10px 20px rgba(0,0,0,0.3);
       animation: float 3s ease-in-out infinite;
       max-width: 90%;
+      position: relative;
     }
 
     .modal-content h1 {
@@ -76,6 +77,7 @@
       font-size: 2rem;
       color: #aaa;
       cursor: pointer;
+      z-index: 20;
     }
 
     .close:hover {
@@ -94,6 +96,7 @@
       animation: rise 5s linear infinite;
       opacity: 0.8;
       pointer-events: none;
+      user-select: none;
     }
 
     @keyframes rise {
@@ -107,6 +110,7 @@
       }
     }
 
+    /* Responsive */
     @media (max-width: 480px) {
       #openBtn {
         font-size: 1rem;
@@ -132,6 +136,19 @@
         right: 1rem;
       }
     }
+
+    /* ซ่อน iframe ให้เล็กมากพร้อมซ่อน pointer */
+    #ytPlayer {
+      width: 0;
+      height: 0;
+      border: none;
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      opacity: 1;
+      pointer-events: none;
+      z-index: -1;
+    }
   </style>
 </head>
 <body>
@@ -146,23 +163,55 @@
     </div>
   </div>
 
+  <!-- iframe ซ่อนสำหรับเล่นเพลง (เริ่มไม่มี src) -->
+  <iframe
+    id="ytPlayer"
+    src=""
+    title="YouTube video player"
+    frameborder="0"
+    allow="autoplay; encrypted-media"
+    allowfullscreen
+  ></iframe>
+
   <script>
     const messages = [
-      "ทุกวันคือโอกาสใหม่<br>เธอสามารถเริ่มต้นใหม่โดยมีเค้าอยู่ข้างๆได้เสมอ :) 🌱",
-      "อย่าลืมหายใจลึกๆ แล้วยิ้มให้กับตัวเองนะ<br>เธอเก่งมากแล้ว 😊",
+      "ทุกวันคือโอกาสใหม่<br>เธอสามารถเริ่มต้นใหม่โดยมีเค้าอยู่ข้างๆได้เสมอ ฟังเพลงด้วยนะะเพลงเพราะมั้วว :) 🌱",
+      "อย่าลืมหายใจลึกๆ แล้วยิ้มให้กับตัวเองนะ<br>เธอเก่งมากแล้ว ฟังเพลงด้วยนะะเพลงเพราะมั้วว😊",
       "แม้วันนี้จะเหนื่อย แต่เค้ายังอยู่ตรงนี้<br>และคอยให้กำลังใจแบบนี้เสมอนะะ :)",
-      "อย่าเปรียบเทียบตัวเองกับใคร<br>เดินไปในจังหวะของเธอเองก็พอ ❤️",
-      "บางครั้งแค่ 'อยู่ตรงนี้' ก็เพียงพอแล้วนะ<br>เพราะเธอมีคุณค่าสำหรับเค้าเสมอ 💖"
+      "อย่าเปรียบเทียบตัวเองกับใคร<br>เดินไปในจังหวะของเธอเองก็พอ ฟังเพลงด้วยนะะเพลงเพราะมั้วว❤️",
+      "บางครั้งแค่ 'อยู่ตรงนี้' ก็เพียงพอแล้วนะ<br>เพราะเธอมีคุณค่าสำหรับเค้าเสมอ ฟังเพลงด้วยนะะเพลงเพราะมั้วว💖"
     ];
 
-    let sparkleInterval = null;
+    const openBtn = document.getElementById("openBtn");
+    const popup = document.getElementById("popup");
+    const messageEl = document.getElementById("message");
+    const ytPlayer = document.getElementById("ytPlayer");
 
     function openModal() {
       const randomMsg = messages[Math.floor(Math.random() * messages.length)];
-      document.getElementById("message").innerHTML = randomMsg;
-      document.getElementById("popup").style.display = "flex";
-      document.getElementById("openBtn").style.display = "none";
+      messageEl.innerHTML = randomMsg;
+      popup.style.display = "flex";
+      openBtn.style.display = "none";
 
+      // ใส่ src ให้ iframe เพื่อเริ่มเล่นเพลงทันที
+      ytPlayer.src = "https://www.youtube.com/embed/9IgndnSZ8HQ?autoplay=1&loop=1&playlist=9IgndnSZ8HQ&controls=0&mute=0";
+    }
+
+    function closeModal() {
+      popup.style.display = "none";
+      // รีเฟรชหน้าเมื่อปิด
+      location.reload();
+    }
+
+    window.onclick = function(event) {
+      if (event.target === popup) {
+        closeModal();
+      }
+    }
+
+    // สร้างดาวลอยขึ้นเฉพาะตอนเปิด modal
+    let sparkleInterval;
+    function startSparkles() {
       sparkleInterval = setInterval(() => {
         const sparkle = document.createElement("div");
         sparkle.classList.add("sparkle");
@@ -174,19 +223,22 @@
       }, 600);
     }
 
-    function closeModal() {
-      document.getElementById("popup").style.display = "none";
+    function stopSparkles() {
       clearInterval(sparkleInterval);
-      sparkleInterval = null;
-      location.reload(); // รีเฟรชหน้า
     }
 
-    window.onclick = function(event) {
-      const modal = document.getElementById("popup");
-      if (event.target === modal) {
-        closeModal();
-      }
-    }
+    // เริ่มและหยุดดาวลอยตอนเปิด/ปิด modal
+    const originalOpenModal = openModal;
+    openModal = function() {
+      originalOpenModal();
+      startSparkles();
+    };
+
+    const originalCloseModal = closeModal;
+    closeModal = function() {
+      stopSparkles();
+      originalCloseModal();
+    };
   </script>
 
 </body>
